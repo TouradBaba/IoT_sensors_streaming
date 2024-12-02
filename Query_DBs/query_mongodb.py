@@ -10,7 +10,7 @@ collection = db['sensor_data']
 # Number of recent documents to retrieve
 num_documents = 10
 
-# Query the data (retrieving the last few inserted documents)
+# Query the data
 documents = collection.find().sort('_id', -1).limit(num_documents)
 
 # Print out the documents

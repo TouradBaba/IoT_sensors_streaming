@@ -30,7 +30,7 @@ background_color = "#fafafa"  # Light grey background
 class Sensor:
     """
     A class representing a sensor that connects to a WebSocket server and receives data.
-    Handles connection, message reception, and storing sensor data (e.g., accelerometer, gyroscope).
+    Handles connection, message reception, and storing sensor data.
     """
 
     def __init__(self, address, sensor_type, x_data_storage, time_data_storage):
@@ -39,7 +39,7 @@ class Sensor:
 
         Parameters:
             address (str): The WebSocket server address to connect to.
-            sensor_type (str): The type of sensor (e.g., 'accelerometer', 'gyroscope').
+            sensor_type (str): The type of sensor.
             x_data_storage (list): A list to store the x-axis data for the sensor.
             time_data_storage (list): A list to store the time data for the sensor.
         """
