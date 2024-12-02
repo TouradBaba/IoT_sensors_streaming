@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfluxDB Pipeline Controller</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { width: 60%; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #4CAF50; color: white; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        #log-container { margin-top: 20px; background: #000; color: #fff; padding: 10px; border-radius: 5px; overflow-y: auto; height: 300px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>InfluxDB-Kafka Pipeline Controller</h1>
+        <form id="pipeline-form">
+            <input type="text" id="influx_token" placeholder="InfluxDB Token" required>
+            <input type="text" id="influx_org" placeholder="InfluxDB Organization" required>
+            <input type="text" id="influx_bucket" placeholder="InfluxDB Bucket" required>
+            <button type="submit">Start Pipeline</button>
+            <button type="button" id="stop-pipeline-btn">Stop Pipeline</button>
+        </form>
+        <div id="log-container"></div>
+    </div>
+    <script>
+        const socket = io();
+
+        socket.on('log_message', data => {
+            const logContainer = document.getElementById('log-container');
+            logContainer.textContent += `${data.log}\n`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        });
+
+        document.getElementById('pipeline-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const data = {
+                influx_token: document.getElementById('influx_token').value,
+                influx_org: document.getElementById('influx_org').value,
+                influx_bucket: document.getElementById('influx_bucket').value,
+            };
+
+            fetch('/start_pipeline', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(json => alert(json.status || json.error));
+        });
+
+        document.getElementById('stop-pipeline-btn').addEventListener('click', () => {
+            fetch('/stop_pipeline', { method: 'POST' })
+                .then(response => response.json())
+                .then(json => alert(json.status || json.error));
+        });
+    </script>
+</body>
+</html>

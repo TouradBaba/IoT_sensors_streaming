@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Pipeline Controller</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+        .container { width: 60%; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        input { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 15px; font-size: 16px; border: none; border-radius: 5px; background-color: #4CAF50; color: white; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        #log-container { margin-top: 20px; background: #000; color: #fff; padding: 10px; border-radius: 5px; overflow-y: auto; height: 300px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MongoDB-Kafka Pipeline Controller</h1>
+        <form id="pipeline-form">
+            <input type="text" id="mongo_db_name" placeholder="MongoDB Database Name" required>
+            <input type="text" id="mongo_collection_name" placeholder="MongoDB Collection Name" required>
+            <button type="submit">Start Pipeline</button>
+            <button type="button" id="stop-pipeline-btn">Stop Pipeline</button>
+        </form>
+        <div id="log-container"></div>
+    </div>
+    <script>
+        const socket = io();
+
+        socket.on('log_message', data => {
+            const logContainer = document.getElementById('log-container');
+            logContainer.textContent += `${data.log}\n`;
+            logContainer.scrollTop = logContainer.scrollHeight;
+        });
+
+        document.getElementById('pipeline-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const data = {
+                mongo_db_name: document.getElementById('mongo_db_name').value,
+                mongo_collection_name: document.getElementById('mongo_collection_name').value,
+            };
+
+            fetch('/start_pipeline', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(json => alert(json.status || json.error));
+        });
+
+        document.getElementById('stop-pipeline-btn').addEventListener('click', () => {
+            fetch('/stop_pipeline', { method: 'POST' })
+                .then(response => response.json())
+                .then(json => alert(json.status || json.error));
+        });
+    </script>
+</body>
+</html>
