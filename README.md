@@ -105,8 +105,8 @@ requirements.txt                       # Project dependencies
 #### 1. **Clone the Repository**
 Clone the repository to your local machine:
 ```bash
-git clone https://github.com/TouradBaba/IoT_sensors_streaming.git
-cd IoT_sensors_streaming
+git clone https://github.com/TouradBaba/sensors_data_streaming.git
+cd sensors_data_streaming
 ```
 
 #### 2. **Create a Virtual Environment**
